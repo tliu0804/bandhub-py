@@ -16,7 +16,7 @@ CFG_TAG = 1
 
 def init(conn_ic_id):
     # noinspection PyGlobalUndefined
-    global config, BLEDriver, BLEAdvData, BLEEvtID, BLEAdapter, BLEEnableParams, BLEGapTimeoutSrc, BLEUUID, BLEConfigCommon, BLEConfig, BLEConfigConnGatt, BLEGapScanParams
+    global config, BLEDriver, BLEAdvData, BLEEvtID, BLEAdapter, BLEEnableParams, BLEGapTimeoutSrc, BLEUUID, BLEConfigCommon, BLEConfig, BLEConfigConnGatt, BLEGapScanParams, BLEGapRoles
     from pc_ble_driver_py import config
 
     config.__conn_ic_id__ = conn_ic_id
@@ -32,6 +32,7 @@ def init(conn_ic_id):
         BLEConfigCommon,
         BLEConfig,
         BLEConfigConnGatt,
+        BLEGapRoles,
     )
 
     # noinspection PyUnresolvedReferences
@@ -83,6 +84,7 @@ class BandhubCollector(BLEDriverObserver, BLEAdapterObserver):
         try:
             new_conn = self.conn_q.get(timeout=scan_duration)
             self.adapter.service_discovery(new_conn)
+            self.adapter.authenticate(new_conn, BLEGapRoles.central)
             return new_conn
         except Empty:
             print(f"No heart rate collector advertising with name {TARGET_DEV_NAME} found.")
